@@ -421,6 +421,12 @@ class GraphAlgorithmAnimator:
             iteration = event[1]
             state = event[2]
             self._animate_iteration_start(graph, iteration, state) 
+            
+        elif event_type == "finish":
+            node = event[1]
+            state = event[2]
+            self._animate_finish(graph, node, state)
+
 
         elif event_type == 'relax':
             v = event[1]
@@ -465,6 +471,16 @@ class GraphAlgorithmAnimator:
             v_mob.animate.set_fill(self.config.DIJKSTRA_FINALIZED, opacity=1),
             run_time=self.config.ANIMATION_SPEED
         )
+        
+    def _animate_finish(self, graph, node, state):
+        """DFS post-order: node is completely processed, turn it blue."""
+        v_mob = self._get_vertex(graph, node)
+        self.scene.play(
+            v_mob.animate.set_fill(self.config.VISITED_COLOR, opacity=1),
+            run_time=self.config.ANIMATION_SPEED,
+        )
+
+
 
     def _animate_discover(self, graph, parent, node, state):
         """Animate discovering a new node via an edge (turns yellow)."""

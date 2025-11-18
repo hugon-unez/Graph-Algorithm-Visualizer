@@ -83,36 +83,53 @@ class AlgorithmGraph(Graph):
                     yield ('discover', neighbor, state['current'], state)
                     
     def dfs(self, start):
-        """Depth-First Search generator with better deep-first animation."""
+        """Depth-First Search generator that yields events for animation.
+        Uses explicit recursion stack and emits:
+            - 'discover' when we first go down an edge
+            - 'finish' when a node is completely done
+        """
         state = {
-            'visited': set(),
-            'stack': [(start, None)],   # stack holds (node, parent)
-            'current': None,
-            'parent': {start: None},
+            "visited": set(),
+            "stack": [start],
+            "current": start,
+            "parent": {start: None},
         }
 
-        while state['stack']:
-            node, parent = state['stack'].pop()
+        visited = state["visited"]
 
-            # Already explored? Skip.
-            if node in state['visited']:
-                continue
+        # Treat `start` as visited from the beginning (no discover; it's the root)
+        visited.add(start)
 
-            # VISIT event
-            state['current'] = node
-            yield ('visit', node, state)
-            state['visited'].add(node)
+        # Frames are (node, next_child_index)
+        frames = [(start, 0)]
 
-            # Set parent if first time
-            if parent is not None:
-                state['parent'][node] = parent
-                yield ('discover', node, parent, state)
+        while frames:
+            v, idx = frames[-1]
+            state["current"] = v
 
-            # Push neighbors in reverse so the first neighbor is explored first.
-            neighbors = list(self.adj[node])
-            for nei in reversed(neighbors):
-                if nei not in state['visited']:
-                    state['stack'].append((nei, node))
+            neighbors = list(self.adj[v])
+
+            if idx < len(neighbors):
+                w = neighbors[idx]
+                # advance the child index on the top frame
+                frames[-1] = (v, idx + 1)
+
+                if w not in visited:
+                    visited.add(w)
+                    state["parent"][w] = v
+                    frames.append((w, 0))
+                    state["stack"].append(w)
+
+                    # We just went down edge v to w
+                    yield ("discover", w, v, state)
+
+            else:
+                # All children processed: we are finishing v
+                frames.pop()
+                state["stack"].pop()
+                yield ("finish", v, state)
+
+
 
     
     def dijkstra(self, start):
