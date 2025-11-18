@@ -1,0 +1,10 @@
+# Virtualenv
+.venv/
+
+# Compiled Python
+__pycache__/
+*.pyc
+
+# Manim output
+media/
+*.mp4
