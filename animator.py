@@ -653,7 +653,7 @@ def animate_algorithm(adjacency_list, algorithm, start, **kwargs):
         "disable_caching": True,
         "pixel_height": 1080,        # Higher quality
         "pixel_width": 1920,
-        "frame_rate": 30,            # Standard frame rate
+        "frame_rate":60,            # Standard frame rate
     }):
         scene = _AlgorithmScene()
         scene.render()
