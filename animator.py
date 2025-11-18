@@ -303,28 +303,55 @@ class GraphAlgorithmAnimator:
 
         self.start_node = start
         self.tree_edges.clear()
+        
+        # Add title
+        algo_title_map = {
+            "bfs": "BFS",
+            "dfs": "DFS",
+            "dijkstra": "Dijkstra",
+            "bellman_ford": "Bellman–Ford",
+        }
+        title_text = algo_title_map.get(algorithm, algorithm)
+        self.scene_title = Text(title_text, font_size=48, color=WHITE)
+        self.scene_title.to_edge(UP)
+        self.scene.play(FadeIn(self.scene_title))
 
         # If adjacency list provided, create the graph
         if isinstance(graph_or_adj, dict):
             layout = kwargs.get(
-                'layout',
+                "layout",
                 self._determine_best_layout(
                     graph_or_adj,
-                    kwargs.get('directed', False)
-                )
+                    kwargs.get("directed", False),
+                ),
             )
+
+            # Set root_vertex when using tree layout
+            extra_graph_kwargs = {}
+            if layout == "tree":
+                extra_graph_kwargs["root_vertex"] = start
+
+            edge_config = {
+            "stroke_width": 4,
+            "buff": 0.25,      # > vertex radius (0.25) so arrows stop outside
+            "tip_length": 0.15,
+            }
+
             graph = AlgorithmGraph(
                 adjacency_list=graph_or_adj,
                 layout=layout,
-                directed=kwargs.get('directed', False),
-                weighted=kwargs.get('weighted', False),
+                directed=kwargs.get("directed", False),
+                weighted=kwargs.get("weighted", False),
                 vertex_config={
-                    'fill_color': BLACK,
-                    'fill_opacity': 1,
-                    'stroke_color': WHITE,
-                    'stroke_width': 3,
-                    'radius': 0.25
-                }
+                    "fill_color": BLACK,
+                    "fill_opacity": 1,
+                    "stroke_color": WHITE,
+                    "stroke_width": 3,
+                    "radius": 0.25,
+                },
+                edge_config=edge_config,
+                edge_type=Arrow,
+                **extra_graph_kwargs,
             )
             
             self.scene.play(Create(graph))
