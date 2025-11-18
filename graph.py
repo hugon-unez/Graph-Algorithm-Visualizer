@@ -83,29 +83,37 @@ class AlgorithmGraph(Graph):
                     yield ('discover', neighbor, state['current'], state)
                     
     def dfs(self, start):
-        """Depth-First Search generator that yields events for animation."""
+        """Depth-First Search generator with better deep-first animation."""
         state = {
             'visited': set(),
-            'stack': [start],
+            'stack': [(start, None)],   # stack holds (node, parent)
             'current': None,
-            'parent': {start: None}
+            'parent': {start: None},
         }
-        
+
         while state['stack']:
-            state['current'] = state['stack'].pop()
-            
-            if state['current'] in state['visited']:
+            node, parent = state['stack'].pop()
+
+            # Already explored? Skip.
+            if node in state['visited']:
                 continue
-                
-            yield ('visit', state['current'], state)
-            state['visited'].add(state['current'])
-            
-            for neighbor in self.adj[state['current']]:
-                if neighbor not in state['visited']:
-                    state['stack'].append(neighbor)
-                    if neighbor not in state['parent']:
-                        state['parent'][neighbor] = state['current']
-                        yield ('discover', neighbor, state['current'], state)
+
+            # VISIT event
+            state['current'] = node
+            yield ('visit', node, state)
+            state['visited'].add(node)
+
+            # Set parent if first time
+            if parent is not None:
+                state['parent'][node] = parent
+                yield ('discover', node, parent, state)
+
+            # Push neighbors in reverse so the first neighbor is explored first.
+            neighbors = list(self.adj[node])
+            for nei in reversed(neighbors):
+                if nei not in state['visited']:
+                    state['stack'].append((nei, node))
+
     
     def dijkstra(self, start):
         """Dijkstra's shortest path algorithm generator that yields events for animation."""
