@@ -6,6 +6,8 @@ It takes in an adjacency list, draws a graph, runs an algorithm step by step, an
 - the graph itself (visited/discovered nodes, tree edges, relaxations), and  
 - an accompanying distance/parent table for shortest-path algorithms for Dijkstra/Bellman Ford
 
+Before the spring, I plan to add subtitles explaining each event.
+
 Currently supported algorithms:
 
 - **BFS**
