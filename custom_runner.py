@@ -1,5 +1,13 @@
 from manim import *
 from animator import GraphAlgorithmAnimator
+from demo_data import get_demos_to_run, ALL_ALGORITHMS
+
+<<<<<<< Current (Your changes)
+# Part 2: stub for get_demos_to_run(algorithm_keys); tests expect this API.
+def get_demos_to_run(algorithm_keys):
+    """Return list of demos to run for given algorithm keys. Part 2: not implemented yet."""
+    raise NotImplementedError("Part 2: implement data-driven demos and filter by algorithm_keys")
+
 
 class MultiAlgorithmScene(Scene):
     def construct(self):
@@ -25,55 +33,24 @@ class MultiAlgorithmScene(Scene):
         )
         self.wait(2)
         self.clear()
+=======
+# Set by run.py before creating the scene; None means "run all four"
+ALGORITHMS_TO_RUN = None
+>>>>>>> Incoming (Background Agent changes)
 
-        # 2. DFS on the same tree
-        dfs_animator = GraphAlgorithmAnimator(self)
-        dfs_animator.animate(
-            tree_adj,
-            "dfs",
-            start=0,
-            directed=False,
-            weighted=False,
-        )
-        self.wait(2)
-        self.clear()
-        
-        
-        # 3. Dijkstra on a weighted graph
-        dijkstra_adj = {
-            0: {1: 4, 2: 1},
-            1: {0: 4, 2: 2, 3: 1, 4: 7},
-            2: {0: 1, 1: 2, 3: 5, 5: 8},
-            3: {1: 1, 2: 5, 4: 3, 5: 2},
-            4: {1: 7, 3: 3, 5: 1},
-            5: {2: 8, 3: 2, 4: 1},
-        }
 
-        dijkstra_animator = GraphAlgorithmAnimator(self)
-        dijkstra_animator.animate(
-            dijkstra_adj,
-            "dijkstra",
-            start=0,
-            directed=False,
-            weighted=True,
-        )
-        self.wait(2)
-        self.clear()
+class MultiAlgorithmScene(Scene):
+    def construct(self):
+        algorithms = ALGORITHMS_TO_RUN if ALGORITHMS_TO_RUN is not None else ALL_ALGORITHMS
+        demos = get_demos_to_run(algorithms)
 
-        # 4. Bellman–Ford on a graph with a negative edge
-        bf_adj = {
-            0: {1: 4, 2: 5},
-            1: {2: -2, 3: 6},
-            2: {3: 1},
-            3: {},
-        }
-
-        bf_animator = GraphAlgorithmAnimator(self)
-        bf_animator.animate(
-            bf_adj,
-            "bellman_ford",
-            start=0,
-            directed=True,
-            weighted=True,
-        )
-        self.wait(2)
+        for demo in demos:
+            animator = GraphAlgorithmAnimator(self)
+            animator.animate(
+                demo["adjacency_list"],
+                demo["algorithm"],
+                **demo["kwargs"],
+            )
+            self.wait(2)
+            if demo is not demos[-1]:
+                self.clear()
