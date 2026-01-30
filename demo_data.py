@@ -37,6 +37,9 @@ DEMO_ITEMS = [
 
 
 def get_demos_to_run(algorithm_keys):
-    """Return list of demos whose algorithm is in algorithm_keys (order preserved from DEMO_ITEMS)."""
+    """Return list of demos whose algorithm is in algorithm_keys (order preserved from DEMO_ITEMS).
+    If algorithm_keys is None or empty, returns all demos."""
+    if algorithm_keys is None or len(algorithm_keys) == 0:
+        return list(DEMO_ITEMS)
     key_set = set(algorithm_keys)
     return [d for d in DEMO_ITEMS if d["algorithm"] in key_set]

@@ -21,4 +21,5 @@ Currently supported algorithms:
    ```bash
    python3.11 -m venv .venv
    source .venv/bin/activate
-2. **Use simple_runner.py boiler plate code to visualize an algorithm on your input graph**
+   ```
+2. **Use simple_runner.py boiler plate code to visualize an algorithm on your input graph**, or **run `python run.py`** to render all four algorithm demos (use `python run.py --help` for options like `--bfs`, `--dijkstra`, `-p`, `-q l|m|h`).

@@ -1,11 +1,9 @@
 """
-Part 2 TDD: tests for CLI parsing and demo filtering.
-These tests are written first; they will fail until Part 2 implementation exists.
+Tests for CLI parsing (run.parse_args) and demo filtering (demo_data.get_demos_to_run).
 Run with: pytest test_run_cli.py -v   or   python test_run_cli.py
 """
 
-# Expected "all four" algorithm keys for assertions
-ALL_ALGORITHMS = ["bfs", "dfs", "dijkstra", "bellman_ford"]
+from demo_data import ALL_ALGORITHMS
 
 
 # ---- CLI parsing tests (run.parse_args) ----
@@ -54,7 +52,7 @@ def test_parse_args_quality_mapping():
         assert opts["quality"] == q
 
 
-# ---- Demo filtering tests (custom_runner.get_demos_to_run) ----
+# ---- Demo filtering tests (demo_data.get_demos_to_run) ----
 
 def test_get_demos_to_run_bfs_returns_one_demo():
     """Given ['bfs'], get_demos_to_run returns one demo with algorithm 'bfs'."""

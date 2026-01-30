@@ -8,8 +8,7 @@ Usage: python run.py [ -p ] [ -q l|m|h ] [ --bfs ] [ --dfs ] [ --dijkstra ] [ --
 """
 import argparse
 
-# All four algorithm keys; used when --all or when no algorithm flags are given
-ALL_ALGORITHMS = ["bfs", "dfs", "dijkstra", "bellman_ford"]
+from demo_data import ALL_ALGORITHMS
 
 # Quality presets: (pixel_height, pixel_width, frame_rate)
 QUALITY_PRESETS = {
