@@ -29,6 +29,12 @@ class AnimationConfig:
     EDGE_FLASH_COLOR = YELLOW
     ANIMATION_SPEED = 0.75
 
+    # Caption config
+    CAPTIONS_ENABLED = True
+    CAPTION_FONT_SIZE = 28
+    CAPTION_COLOR = WHITE
+    CAPTION_EDGE_OFFSET = 0.3  # shift UP from DOWN edge (in manim units)
+
 
 class GraphAlgorithmAnimator:
     def __init__(self, scene, config=None):
@@ -42,6 +48,10 @@ class GraphAlgorithmAnimator:
         self.row_for_vertex = {}    # vertex -> row index
         
         self.updated_this_step = set() # for djikstra bellman ford
+
+        # Caption state (reset at start of each animate() run)
+        self._caption_mob = None
+        self._caption_text = None
 
 
     # STATIC/UTILITY METHODS
@@ -371,6 +381,10 @@ class GraphAlgorithmAnimator:
             self._highlight_start_node(graph)
 
 
+        # Reset caption state for this run
+        self._caption_mob = None
+        self._caption_text = None
+
         # Get the algorithm generator
         algo_method = getattr(graph, algorithm)
         algo_generator = algo_method(start)
@@ -444,6 +458,67 @@ class GraphAlgorithmAnimator:
             # Unknown event
             pass
 
+        self._show_caption(graph, event)
+
+    def _caption_for_event(self, graph, event):
+        """Return caption string for this event, or None/empty if no caption."""
+        event_type = event[0]
+        labels = graph.vertex_labels
+
+        if event_type == 'visit':
+            node = event[1]
+            return f"Visit {labels[node]}"
+        if event_type == 'discover':
+            node, parent = event[1], event[2]
+            return f"Discover {labels[node]} from {labels[parent]}"
+        if event_type == 'update':
+            node, parent, new_dist = event[1], event[2], event[3]
+            return f"Update {labels[node]}: dist = {new_dist} via {labels[parent]}"
+        if event_type == 'init':
+            start, dist = event[1], event[2]
+            return f"Initialize: start {labels[start]}, dist = {dist}"
+        if event_type == 'iteration_start':
+            iteration = event[1]
+            return f"Iteration {iteration}"
+        if event_type == 'finish':
+            node = event[1]
+            return f"Finish {labels[node]}"
+        if event_type == 'relax':
+            v, u, new_dist = event[1], event[2], event[3]
+            return f"Relax {labels[u]} → {labels[v]}: dist({labels[v]}) = {new_dist}"
+        if event_type == 'negative_cycle':
+            (u, v) = event[1]
+            return f"Negative cycle on {labels[u]} → {labels[v]}"
+        return None
+
+    def _show_caption(self, graph, event):
+        """Show or update the caption from this event."""
+        if not getattr(self.config, 'CAPTIONS_ENABLED', True):
+            return
+        text = self._caption_for_event(graph, event)
+        if not text:
+            return
+        if text == self._caption_text:
+            return
+        self._caption_text = text
+        caption_mob = Text(
+            text,
+            font_size=getattr(self.config, 'CAPTION_FONT_SIZE', 28),
+            color=getattr(self.config, 'CAPTION_COLOR', WHITE),
+            font="Sans",
+        )
+        caption_mob.to_edge(DOWN).shift(UP * getattr(self.config, 'CAPTION_EDGE_OFFSET', 0.3))
+        if self._caption_mob is None:
+            self.scene.add(caption_mob)
+            self.scene.play(FadeIn(caption_mob), run_time=self.config.ANIMATION_SPEED / 2)
+        else:
+            caption_mob.move_to(self._caption_mob.get_center())
+            self.scene.play(
+                FadeOut(self._caption_mob),
+                FadeIn(caption_mob),
+                run_time=self.config.ANIMATION_SPEED / 2,
+            )
+        self._caption_mob = caption_mob
 
     # EVENT HANDLERS - BFS/DFS/Dijkstra
 

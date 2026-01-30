@@ -1,25 +1,34 @@
-# Graph Algorithm Visualizer (built on top of manim)
+# Graph Algorithm Visualizer
 
-This project is a manim-based visualizer for shortest path graph algorithms.  
-It takes in an adjacency list, draws a graph, runs an algorithm step by step, and animates both:
+A [Manim](https://www.manim.community/)-based visualizer for graph traversal and shortest-path algorithms. It turns an adjacency list and an algorithm choice into a step-by-step animation: the graph is drawn, nodes and edges are highlighted as the algorithm runs, and (for Dijkstra and Bellman–Ford) a distance/parent table is updated alongside the graph.
 
-- the graph itself (visited/discovered nodes, tree edges, relaxations), and  
-- an accompanying distance/parent table for shortest-path algorithms for Dijkstra/Bellman Ford
+**Supported algorithms:** BFS, DFS, Dijkstra, Bellman–Ford.
 
 Before the spring, I plan to add subtitles explaining each event.
 
 Currently supported algorithms:
 
-- **BFS**
-- **DFS**
-- **Dijkstra**
-- **Bellman–Ford**
+---
+
+## What you need
+
+- **Python 3** (3.11 recommended)
+- **Manim Community Edition**
+
+```bash
+pip install manim
+```
+
+(Use a virtual environment so the project’s dependencies don’t conflict with the rest of your system.)
 
 ---
 
 ## Setup
 
-1. **Create and activate a virtualenv (unless you have python 3.11):**
+1. **Clone or download this project** and open a terminal in the project folder.
+
+2. **Create and activate a virtual environment** (recommended):
+
    ```bash
    python3.11 -m venv .venv
    source .venv/bin/activate
